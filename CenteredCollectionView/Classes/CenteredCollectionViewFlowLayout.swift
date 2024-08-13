@@ -25,6 +25,9 @@ open class CenteredCollectionViewFlowLayout: UICollectionViewFlowLayout {
     private var lastCollectionViewSize: CGSize = CGSize.zero
     private var lastScrollDirection: UICollectionView.ScrollDirection!
     private var lastItemSize: CGSize = CGSize.zero
+    
+    private var needsCalibrateContentOffset = false
+    
     var pageWidth: CGFloat {
         switch scrollDirection {
         case .horizontal:
@@ -56,6 +59,10 @@ open class CenteredCollectionViewFlowLayout: UICollectionViewFlowLayout {
         lastScrollDirection = scrollDirection
     }
     
+    open override func prepareForTransition(from oldLayout: UICollectionViewLayout) {
+        needsCalibrateContentOffset = oldLayout is CenteredCollectionViewFlowLayout
+    }
+    
     override open func invalidateLayout(with context: UICollectionViewLayoutInvalidationContext) {
         super.invalidateLayout(with: context)
         guard let collectionView = collectionView else { return }
@@ -80,6 +87,13 @@ open class CenteredCollectionViewFlowLayout: UICollectionViewFlowLayout {
             lastScrollDirection = scrollDirection
             lastItemSize = itemSize
         }
+    }
+    
+    open override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
+        if needsCalibrateContentOffset {
+            return targetContentOffset(forProposedContentOffset: proposedContentOffset, withScrollingVelocity: .zero)
+        }
+        return super.targetContentOffset(forProposedContentOffset: proposedContentOffset)
     }
     
     override open func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint) -> CGPoint {
