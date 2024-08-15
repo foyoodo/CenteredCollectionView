@@ -91,6 +91,7 @@ open class CenteredCollectionViewFlowLayout: UICollectionViewFlowLayout {
     
     open override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
         if needsCalibrateContentOffset {
+            needsCalibrateContentOffset = false
             return targetContentOffset(forProposedContentOffset: proposedContentOffset, withScrollingVelocity: .zero)
         }
         return super.targetContentOffset(forProposedContentOffset: proposedContentOffset)
